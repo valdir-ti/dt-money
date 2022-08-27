@@ -1,34 +1,25 @@
-import { useEffect } from "react";
-import { createServer } from 'miragejs'
+import { useEffect, useState } from "react";
 
 import { api } from "../../services/api";
 
 import { Container } from "./styles";
 
-createServer({
-    routes() {
-        this.namespace = 'api';
-
-        this.get('/transactions', () => {
-            return [
-                {
-                    id: 1,
-                    title: 'transaction one',
-                    amount: 400,
-                    type: 'deposit',
-                    category: 'salary',
-                    date: new Date()
-                }
-            ]
-        })
-    }
-})
+interface Transaction {
+    id: number;
+    title: string;
+    category: string;
+    amount: number;
+    type: string;
+    createdAt: string;
+}
 
 export function TransactionsTable() {
 
+    const [transactions, setTransactions] = useState<Transaction[]>([])
+
     useEffect(() => {
         api.get('transactions')
-            .then(response => console.log('data =>', response.data));
+            .then(response => setTransactions(response.data.transactions));
     }, [])
 
     return (
@@ -43,30 +34,14 @@ export function TransactionsTable() {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Desenvolvimento de website</td>
-                        <td className="deposit">R$12.000,00</td>
-                        <td>Freelance</td>
-                        <td>22/07/2022</td>
-                    </tr>
-                    <tr>
-                        <td>Parcela apartamento</td>
-                        <td className="withdraw">- R$1.400,00</td>
-                        <td>Despesa</td>
-                        <td>01/08/2022</td>
-                    </tr>
-                    <tr>
-                        <td>Compra supermercado</td>
-                        <td className="withdraw">- R$600,00</td>
-                        <td>Despesa</td>
-                        <td>21/07/2022</td>
-                    </tr>
-                    <tr>
-                        <td>Salário</td>
-                        <td className="deposit">R$10.000,00</td>
-                        <td>Salário</td>
-                        <td>30/07/2022</td>
-                    </tr>
+                    {transactions.map(transaction => (
+                        <tr key={transaction.id}>
+                            <td>{transaction.title}</td>
+                            <td className={transaction.type}>R${transaction.amount}</td>
+                            <td>{transaction.category}</td>
+                            <td>22/07/2022</td>
+                        </tr>                    
+                    ))}
                 </tbody>
             </table>
         </Container>
