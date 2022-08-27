@@ -3,9 +3,11 @@ import { createServer, Model } from 'miragejs'
 
 import { Header } from './components/Header';
 import { Dashboard } from './components/Dashboard';
+import { NewTransactionModal } from './components/NewTransactionModal';
+
+import { TransactionProvider } from './TransactionContext';
 
 import { GlobalStyle } from './styles/global';
-import { NewTransactionModal } from './components/NewTransactionModal';
 
 createServer({
 
@@ -63,7 +65,7 @@ export function App() {
   }
 
   return (
-    <>
+    <TransactionProvider>
       <GlobalStyle />
       <Header onOpenNewTransactionModal={handleOpenNewTransactionModal} />
       <Dashboard />
@@ -71,6 +73,6 @@ export function App() {
         isOpen={isNewTransactionModalOpen} 
         onRequestClose={handleCloseNewTransactionModal}
       />
-    </>
+    </TransactionProvider>
   );
 }
